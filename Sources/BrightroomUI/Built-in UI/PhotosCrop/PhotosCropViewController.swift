@@ -90,6 +90,8 @@ public final class PhotosCropViewController: UIViewController {
     
   private var subscriptions = Set<VergeAnyCancellable>()
   private var hasSetupLoadedUICompleted = false
+    
+  private let disableRotateButton: Bool
   
   public var localizedStrings: LocalizedStrings
   
@@ -98,11 +100,13 @@ public final class PhotosCropViewController: UIViewController {
   public init(
     editingStack: EditingStack,
     options: Options = .init(),
-    localizedStrings: LocalizedStrings = .init()
+    localizedStrings: LocalizedStrings = .init(),
+    disableRotateButton: Bool = false
   ) {
     self.localizedStrings = localizedStrings
     self.store = .init(initialState: .init(options: options))
     self.editingStack = editingStack
+    self.disableRotateButton = disableRotateButton
     cropView = .init(editingStack: editingStack)
     super.init(nibName: nil, bundle: nil)
   }
@@ -303,7 +307,10 @@ public final class PhotosCropViewController: UIViewController {
         
     self.aspectRatioButton.isEnabled = true
     self.resetButton.isEnabled = true
-    self.rotateButton.isEnabled = true
+    self.rotateButton.isEnabled = !disableRotateButton
+    if disableRotateButton {
+        self.rotateButton.setImage(nil, for: .normal)
+    }
     self.doneButton.isEnabled = true
     
     let control = PhotosCropAspectRatioControl(
